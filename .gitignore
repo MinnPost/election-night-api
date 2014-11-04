@@ -1,2 +1,2 @@
 logs
-scraperwiki.sqlite
+*.sqlite
