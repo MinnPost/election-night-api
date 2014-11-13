@@ -80,7 +80,7 @@ def test_save_results():
         'party': 'R',
         'votes': 10,
         'percentage': 25.0,
-        'updated': 10000
+        'updated': ena_util_in.timestamp()
     });
     rows = ena_util_in.sql.select('* FROM results')
     assert rows != [] and rows[0]['id'] == 'test-row'
@@ -98,10 +98,10 @@ def test_save_contests():
         'title': 'Contest Race',
         'sub_title': '',
         'precincts_reporting': 10,
-        'total_effected_precincts': 100,
+        'total_precincts': 100,
         'percent_reporting': 10.0,
         'total_votes': 1111,
-        'updated': 10000
+        'updated': ena_util_in.timestamp()
     });
     rows = ena_util_in.sql.select('* FROM contests')
     assert rows != [] and rows[0]['id'] == 'test-row'

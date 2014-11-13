@@ -55,7 +55,7 @@ class ENAUtils(object):
         'title': str,
         'sub_title': str,
         'precincts_reporting': int,
-        'total_effected_precincts': int,
+        'total_precincts': int,
         'percent_reporting': float,
         'total_votes': int,
         'updated': int
@@ -74,11 +74,21 @@ class ENAUtils(object):
         # Logging
         self.logger = self.default_logger if logger == False else logger
 
+        # Add import path to sraper dir
+        sys.path.append(self.scraper_dir)
+
         # Get meta file
         self.meta_file = os.path.join(self.scraper_dir, state, '%s_meta.py' % self.state)
         if os.path.exists(self.meta_file) and os.path.isfile(self.meta_file):
-            self.meta = __import__('states.%s.%s_meta' % (self.state, self.state),
+            self.meta = __import__('%s.%s_meta' % (self.state, self.state),
                 globals(), locals(), ['meta'], -1).meta
+
+        # Get scraper class
+        self.meta_file = os.path.join(self.scraper_dir, state, '%s.py' % self.state)
+        if os.path.exists(self.meta_file) and os.path.isfile(self.meta_file):
+            self.Scraper = __import__('%s.%s' % (self.state, self.state),
+                globals(), locals(), ['Scraper'], -1).Scraper
+
 
         # Determine election.  If not defined, we use the newest one
         if election in ['', None, False]:
@@ -112,8 +122,10 @@ class ENAUtils(object):
             scraperwiki.sql.execute('PRAGMA SYNCHRONOUS = OFF')
         scraperwiki.sql.execute('VACUUM')
 
-        # Attach scraperwiki
+        # Attach scraperwiki stuff
+        # https://github.com/scraperwiki/scraperwiki-python
         self.sql = scraperwiki.sql
+        self.scrape = scraperwiki.scrape
 
 
     def default_logger(self, message):

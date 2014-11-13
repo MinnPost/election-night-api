@@ -16,6 +16,13 @@ A set of scrapers to create an API for election night applications.  This is aim
     1. mkvirtualenv election-night-api
 1. Install libraries: pip install -r requirements.txt
 
+## Running
+
+* ena
+* python bin/ena.py MN -e 20141104 areas
+* python bin/ena.py MN -e 20141104 results
+* python bin/ena.py MN -e 20141104 contests
+
 ## Tests
 
 1. py.test

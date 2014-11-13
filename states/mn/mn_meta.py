@@ -15,7 +15,11 @@ meta = {
     # Eleciton ID
     '20141104': {
         # Date of election
-        'date': date(2014, 11, 04)
+        'date': date(2014, 11, 04),
+        # Whether primary
+        'primary': False
+
+        #...
 
     }
 }
