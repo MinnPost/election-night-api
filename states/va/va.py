@@ -165,6 +165,7 @@ class Scraper:
             #calculate percentage for the candidate
             if 'total_votes' in contests[results[choice_id]['contest_id']]:
                 percent = float(results[choice_id]['votes'])/float(contests[results[choice_id]['contest_id']]['total_votes'])
+                percent = percent * 100
             else:
                 percent = 0.0
 
@@ -184,6 +185,7 @@ class Scraper:
         for contest_id in contests:
             #calculate the percent of precincts reporting
             percent = float(len(contests[contest_id]['counted_precincts']))/float(len(contests[contest_id]['all_precincts']))
+            percent = percent * 100
 
             self.util.save_contests({
                 'id': contest_id,
