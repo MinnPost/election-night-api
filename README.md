@@ -10,7 +10,7 @@ The `bin/ena` command is a wrapper to run each state scraper methods.  It is arb
 * Update results for the newest election in MN: `bin/ena MN results`
 * Update areas data for specific election in MN: `bin/ana MN areas -e 20141104`
 
-## Development
+## Install
 
 ### Prerequisites
 
@@ -30,6 +30,15 @@ You may have the following already installed.
 1. Get the code and change to directory: `git clone https://github.com/MinnPost/election-night-api.git && cd election-night-api`
 1. (optional) Make a virtualenv to work in: `mkvirtualenv election-night-api`
 1. Install libraries: `pip install -r requirements.txt`
+
+### Local API
+
+For testing purposes, it is probably easier to use the lightweight, not production ready, API application.
+
+1. Run local API with: `python tests/local_api.py`
+1. Make requests to: `http://localhost:5000/?q=SELECT * FROM contests LIMIT 10`
+
+## Development
 
 ### Adding or managing a state
 
@@ -119,3 +128,21 @@ The utility object has a `save` method for saving any data into any table as nee
 ## Architecture
 
 The architecture of this application is based from [ScraperWiki](https://scraperwiki.com) a platform for scraping and serving data.  The main reason for this decision is so that on or around election night, an organization can run its own server with high resources, while using the [free](https://scraperwiki.com/pricing) (for [journalists](https://wordpress.scraperwiki.com/solutions/data-journalism/)) infrastructure of ScraperWiki the rest of the year.
+
+## Deploy
+
+For election night, the idea is to install this on a resourceful server; overall the server should have most resources towards I/O as opposed to memory or CPU, though those things are needed as well.  The following instructions and the provided configuration are aimed at installing the API on an Ubuntu server (on EC2).
+
+As this is meant to emulate how ScraperWiki works, it uses Python, FastCGI and Nginx to create an API for the scraped data in the sqlite database.
+
+It is suggested to use `Ubuntu Server 14.04 LTS 64-bit (ami-9eaa1cf6)` AMI from EC2.  Your Security Group will need port `80` (HTTP) open and whatever port you will SSH into (default `22`).
+
+### Code, libraries, and prerequisites
+
+1. Make sure Ubuntu is up to date: `sudo aptitude update && sudo aptitude safe-upgrade`
+1. Install system and python base packages: `sudo aptitude install git-core git python-pip python-dev build-essential python-lxml sqlite3 nginx-full fcgiwrap`
+1. Install python base packages: `sudo pip install --upgrade pip && sudo pip install --upgrade virtualenv`
+1. Go to the home directory; you can put the code somewhere else but you may have to manually update other parts of the deploy: `cd ~`
+1. Get the code: `git clone https://github.com/MinnPost/minnpost-scraper-mn-election-results.git && cd minnpost-scraper-mn-election-results`
+1. `sudo pip install -r requirements.txt`
+1. Add path so we have reference for later: `echo "export ENA_PATH=$(pwd)"" >> ~/.bash_profile`
