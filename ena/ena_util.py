@@ -220,7 +220,7 @@ class ENAUtils(object):
         }, 'meta')
 
 
-    def google_spreadsheet(self, spreadsheet_id, worksheet_id):
+    def google_spreadsheet(self, spreadsheet_id, worksheet_id, gs_types = None):
         """
         Get data from a Google spreadsheet.  Update self.google_spreadsheet_types
         to get type other data if needed.
@@ -228,11 +228,15 @@ class ENAUtils(object):
         Arguments:
         spreadsheet_id - ID of spreadsheet, this is the long hash in the URL
         worksheet_id - The 0-based index of the sheets
+        gs_types - dictionary of types keyed by fields to help force the type
+            of data that is coming in
 
         Returns:
         Array of rows of data
         """
         rows = []
+        gs_types = gs_types if gs_types != None else self.google_spreadsheet_types
+
         try:
             # We do some hackery to get the correct worksheet ID
             client = SpreadsheetsService()
@@ -250,8 +254,8 @@ class ENAUtils(object):
                 for f in r.custom:
                     # Try typing
                     c = f.replace('.', '_')
-                    if r.custom[f].text is not None and c in self.google_spreadsheet_types:
-                        p_row[c] = self.google_spreadsheet_types[c](r.custom[f].text)
+                    if r.custom[f].text is not None and c in gs_types:
+                        p_row[c] = gs_types[c](r.custom[f].text)
                     else:
                         p_row[c] = r.custom[f].text
 
