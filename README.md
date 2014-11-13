@@ -56,6 +56,7 @@ Contests are the generic word for races, ballot questions, referendums, etc.  Th
 * `total_precincts`: Interger number of total precincts effected by contest
 * `percent_reporting`: Float percentage (85.0, not 0.85) of precincts reporting
 * `total_votes`: Integer of total votes cast
+* `seats`: Seats available for contest, usually 1
 * ... and whatever other data is relevant for this contest
 
 The utility object has a convenient `save_contests` method for updating results.

@@ -57,6 +57,7 @@ class ENAUtils(object):
         'total_precincts': [int],
         'percent_reporting': [float],
         'total_votes': [int],
+        'seats': [int],
         'updated': [int]
     }
 
