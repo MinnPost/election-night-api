@@ -25,7 +25,11 @@ You may have the following already installed.
 
 ### Tests
 
-1. Run tests with: `py.test`
+`py.test` will find all python files with [specific names](http://pytest.org/latest/goodpractises.html#test-discovery) in a given directory.
+
+1. Run all the tests (including all the states): `py.test`
+1. Run all the state tests: `py.test states/`
+1. Run a specific state test: `py.test states/mn/`
 
 ## Running
 
