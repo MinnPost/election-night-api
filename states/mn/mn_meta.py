@@ -141,7 +141,8 @@ meta = {
         # Question body
         'questions': {
             'ballot_questions': {
-                'url': 'BallotQuestions.txt'
+                'ftp_file': 'BallotQuestions.txt',
+                'http_file': '11'
             }
         },
         # Supplementable results via Google spreadsheets

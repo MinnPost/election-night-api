@@ -122,6 +122,20 @@ class Scraper:
                 self.util.save_results(results_record)
                 self.util.save_contests(contests_record)
 
+        # Some post results activites
+
+        # Update some vars for easy retrieval
+        self.util.save_meta('updated', self.util.timestamp())
+        contests = self.util.sql.select("COUNT(id) AS contest_count FROM contests WHERE state = '%s' AND election = '%s'" % (self.util.state, self.util.election_id))
+        if contests != []:
+            self.util.save_meta('contests', int(contests[0]['contest_count']))
+
+        # Use the first state level race to get general number of precincts reporting
+        #state_contest = self.util.sql.select("* FROM contests WHERE county_id = '88' WHERE state = '%s' AND election = '%s' LIMIT 1" % (self.util.state, self.util.election_id))
+        #if state_contest != []:
+        #    self.util.save_meta('precincts_reporting', int(state_contest[0]['precincts_reporting']))
+        #    self.util.save_meta('total_precincts', int(state_contest[0]['total_precincts']))
+
 
 
     def areas(self, *args):
@@ -129,7 +143,7 @@ class Scraper:
         Scrape area meta data.  This does not need to be run often.
 
         Called with command line like:
-        ena MN meta
+        bin/ena MN areas
         """
 
         # Go through and get the areas data
@@ -206,3 +220,75 @@ class Scraper:
 
                 # Save final
                 self.util.save(['id'], parsed, 'mn_areas')
+
+
+
+    def questions(self, *args):
+        """
+        Scrape question meta data.  This does not need to be run often.
+
+        Called with command line like:
+        bin/ena MN questions
+
+        Note that for whatever reason there
+        are duplicates in the MN SoS data source.
+
+        County ID
+        Office Code
+        MCD code, if applicable (using FIPS statewide unique codes, not county MCDs)
+        School District Numbe, if applicable
+        Ballot Question Number
+        Question Title
+        Question Body
+        """
+
+        # Go through and get the areas data
+        for r in self.util.election['questions']:
+            result_set = self.util.election['questions'][r]
+            #url = self.util.election['base_ftp'] % (result_set['ftp_file'])
+
+            url = self.util.election['base_http'] % (result_set['http_file'])
+
+            try:
+                scraped = self.util.scrape(url)
+                # latin-1 is to support the occasional accent character
+                rows = unicodecsv.reader(scraped.splitlines(), delimiter=';', quotechar='|', encoding='latin-1')
+            except Exception, err:
+                print 'Issue reading in question %s: %s' % (r, url)
+                raise
+
+            # Go through rows found
+            for row in rows:
+                timestamp = self.util.timestamp()
+                combined_id = 'id-' + row[0] + '-' + row[1] + '-' + row[2] + '-' + row[3]
+
+                # We have to do some hackery to get the right contest ID
+                # County
+                # 0 - - - 1
+                # id-MN-38---0421
+
+                # City question
+                # ^0 - - 2 - 1
+                #id-MN---43000-1131
+
+                # School
+                # ^0 - - 3 - 1
+                # id-MN---110-5031
+                contest_id = 'id-MN-' + row[0] + '-' + row[3] + '-' + row[2] + '-' + row[1]
+                if row[2] is not None and row[2] != '':
+                    contest_id = 'id-MN---' + row[2] + '-' + row[1]
+                if row[3] is not None and row[3] != '':
+                    contest_id = 'id-MN---' + row[3] + '-' + row[1]
+
+                # Make row
+                parsed = {
+                    'id': combined_id,
+                    'contest_id': contest_id,
+                    'title': row[4],
+                    'sub_title': row[5],
+                    'question_body': row[6],
+                    'updated': int(timestamp)
+                }
+
+                # Save final
+                self.util.save(['id'], parsed, 'mn_questions')
