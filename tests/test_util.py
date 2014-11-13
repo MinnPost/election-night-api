@@ -74,13 +74,13 @@ def test_save_results():
         'id': 'test-row',
         'state': ena_util_in.state,
         'election': ena_util_in.election_id,
+        'updated': ena_util_in.timestamp(),
         'contest_id': 'contest-test-id',
-        'candidate': 'Candidate Name',
-        'incumbent': False,
+        'choice': 'Candidate Name',
+        'winner': False,
         'party': 'R',
         'votes': 10,
-        'percentage': 25.0,
-        'updated': ena_util_in.timestamp()
+        'percentage': 25.0
     });
     rows = ena_util_in.sql.select('* FROM results')
     assert rows != [] and rows[0]['id'] == 'test-row'

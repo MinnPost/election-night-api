@@ -35,30 +35,29 @@ class ENAUtils(object):
 
     # Schema for results table
     results_schema = {
-        'id': str,
-        'state': str,
-        'election': str,
-        'contest_id': str,
-        'candidate': str,
-        'incumbent': bool,
-        'party': str,
-        'votes': int,
-        'percentage': float,
-        'updated': int
+        'id': [str, unicode],
+        'state': [str, unicode],
+        'election': [str, unicode],
+        'contest_id': [str, unicode],
+        'choice': [str, unicode],
+        'party': [str, unicode],
+        'votes': [int],
+        'percentage': [float],
+        'winner': [bool],
+        'updated': [int]
     }
 
     # Schema for contests table
     contests_schema = {
-        'id': str,
-        'state': str,
-        'election': str,
-        'title': str,
-        'sub_title': str,
-        'precincts_reporting': int,
-        'total_precincts': int,
-        'percent_reporting': float,
-        'total_votes': int,
-        'updated': int
+        'id': [str, unicode],
+        'state': [str, unicode],
+        'election': [str, unicode],
+        'title': [str, unicode],
+        'precincts_reporting': [int],
+        'total_precincts': [int],
+        'percent_reporting': [float],
+        'total_votes': [int],
+        'updated': [int]
     }
 
     # Keep track of index methods called
@@ -255,7 +254,7 @@ class ENAUtils(object):
         Make index for results table.
         """
         index_query = "CREATE INDEX IF NOT EXISTS %s ON results (%s)"
-        scraperwiki.sql.execute(index_query % ('results_candidate', 'candidate'))
+        scraperwiki.sql.execute(index_query % ('results_choice', 'choice'))
         scraperwiki.sql.execute(index_query % ('results_contest_id', 'contest_id'))
         scraperwiki.sql.execute(index_query % ('results_election_id', 'id, state, election'))
 
@@ -266,7 +265,6 @@ class ENAUtils(object):
         """
         index_query = "CREATE INDEX IF NOT EXISTS %s ON contests (%s)"
         scraperwiki.sql.execute(index_query % ('contests_title', 'title'))
-        scraperwiki.sql.execute(index_query % ('contests_sub_title', 'sub_title'))
         scraperwiki.sql.execute(index_query % ('contests_election_id', 'id, state, election'))
 
 
@@ -281,11 +279,11 @@ class ENAUtils(object):
         # Go through the list make sure the basic fields are there
         for d in data:
             for f in self.results_schema:
-                if f not in d or type(d[f]) != self.results_schema[f]:
+                if f not in d or type(d[f]) not in self.results_schema[f]:
                     raise Exception('Results row does not have the correct value for %s: %s' % (f, d))
 
         # Save data
-        self.save(['id'], data, 'results', self.index_results)
+        self.save(['id', 'state', 'election'], data, 'results', self.index_results)
 
 
     def save_contests(self, data):
@@ -299,8 +297,8 @@ class ENAUtils(object):
         # Go through the list make sure the basic fields are there
         for d in data:
             for f in self.contests_schema:
-                if f not in d or type(d[f]) != self.contests_schema[f]:
+                if f not in d or type(d[f]) not in self.contests_schema[f]:
                     raise Exception('Contests row does not have the correct value for %s: %s' % (f, d))
 
         # Save data
-        self.save(['id'], data, 'contests', self.index_contests)
+        self.save(['id', 'state', 'election'], data, 'contests', self.index_contests)
