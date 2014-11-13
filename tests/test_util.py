@@ -64,6 +64,48 @@ def test_save_meta():
     rows = ena_util_in.sql.select('* FROM meta')
     assert rows != []
 
+def test_save_results():
+    """
+    Test results save.
+    """
+    ena_util_in = ena_util.ENAUtils('MN', False, debug = True, db_file = db_file)
+    ena_util_in.setup();
+    ena_util_in.save_results({
+        'id': 'test-row',
+        'state': ena_util_in.state,
+        'election': ena_util_in.election_id,
+        'contest_id': 'contest-test-id',
+        'candidate': 'Candidate Name',
+        'incumbent': False,
+        'party': 'R',
+        'votes': 10,
+        'percentage': 25.0,
+        'updated': 10000
+    });
+    rows = ena_util_in.sql.select('* FROM results')
+    assert rows != [] and rows[0]['id'] == 'test-row'
+
+def test_save_contests():
+    """
+    Test contests save.
+    """
+    ena_util_in = ena_util.ENAUtils('MN', False, debug = True, db_file = db_file)
+    ena_util_in.setup();
+    ena_util_in.save_contests({
+        'id': 'test-row',
+        'state': ena_util_in.state,
+        'election': ena_util_in.election_id,
+        'title': 'Contest Race',
+        'sub_title': '',
+        'precincts_reporting': 10,
+        'total_effected_precincts': 100,
+        'percent_reporting': 10.0,
+        'total_votes': 1111,
+        'updated': 10000
+    });
+    rows = ena_util_in.sql.select('* FROM contests')
+    assert rows != [] and rows[0]['id'] == 'test-row'
+
 def test_google_spreadsheet():
     """
     Test a save.

@@ -5,3 +5,17 @@ A set of scrapers to create an API for election night applications.  This is aim
 
 
 (more details coming soon)
+
+## Development
+
+1. Install Python
+1. Install libxml
+    1. On Mac ensure XCode developer tools are installed and up to date: `xcode-select --install`
+1. (optional) Use virtualenv and vitrualenvwrapper
+    1. pip install virtualenv virtualenvwrapper
+    1. mkvirtualenv election-night-api
+1. Install libraries: pip install -r requirements.txt
+
+## Tests
+
+1. py.test

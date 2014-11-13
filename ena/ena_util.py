@@ -17,10 +17,13 @@ class ENAUtils(object):
 
     # Where the scrapers are
     scraper_dir = os.path.join(os.path.dirname(__file__), '../states')
+
     # Where the sqlite db is
     db_file = os.path.join(os.path.dirname(__file__), '../scraperwiki.sqlite')
+
     # Whether to turn of synchronous on the database
     db_synchronous = False
+
     # Typing for google spreadsheets, maybe this should be done
     # with Pickle?
     google_spreadsheet_types = {
@@ -29,6 +32,37 @@ class ENAUtils(object):
         'ranked_choice_place': int,
         'percent_needed': float
     }
+
+    # Schema for results table
+    results_schema = {
+        'id': str,
+        'state': str,
+        'election': str,
+        'contest_id': str,
+        'candidate': str,
+        'incumbent': bool,
+        'party': str,
+        'votes': int,
+        'percentage': float,
+        'updated': int
+    }
+
+    # Schema for contests table
+    contests_schema = {
+        'id': str,
+        'state': str,
+        'election': str,
+        'title': str,
+        'sub_title': str,
+        'precincts_reporting': int,
+        'total_effected_precincts': int,
+        'percent_reporting': float,
+        'total_votes': int,
+        'updated': int
+    }
+
+    # Keep track of index methods called
+    index_created = {}
 
 
     def __init__(self, state, election, debug = False, db_file = False, logger = False):
@@ -52,8 +86,10 @@ class ENAUtils(object):
             for m in self.meta:
                 if self.meta[m]['date'] > newest:
                     self.election = self.meta[m]
+                    self.election_id = m
         else:
             self.election = self.meta[election]
+            self.election_id = election
 
         # Overall, we shouldn't change the db, but for testing, it is
         # helpful
@@ -118,7 +154,7 @@ class ENAUtils(object):
             self.sql.save(unique_keys = ids, data = data, table_name = table)
 
             # Create index if needed
-            if index_method is not None and callable(index_method) and not self.index_created[table]:
+            if index_method is not None and callable(index_method) and (table not in self.index_created or not self.index_created[table]):
                 index_method()
                 self.index_created[table] = True
         except Exception, err:
@@ -202,15 +238,14 @@ class ENAUtils(object):
         return rows
 
 
-
     def index_results(self):
         """
         Make index for results table.
         """
         index_query = "CREATE INDEX IF NOT EXISTS %s ON results (%s)"
-        scraperwiki.sql.execute(index_query % ('office_name', 'office_name'))
-        scraperwiki.sql.execute(index_query % ('candidate', 'candidate'))
-        scraperwiki.sql.execute(index_query % ('contest_id', 'contest_id'))
+        scraperwiki.sql.execute(index_query % ('results_candidate', 'candidate'))
+        scraperwiki.sql.execute(index_query % ('results_contest_id', 'contest_id'))
+        scraperwiki.sql.execute(index_query % ('results_election_id', 'id, state, election'))
 
 
     def index_contests(self):
@@ -218,5 +253,42 @@ class ENAUtils(object):
         Make index for contests table.
         """
         index_query = "CREATE INDEX IF NOT EXISTS %s ON contests (%s)"
-        scraperwiki.sql.execute(index_query % ('title', 'title'))
-        scraperwiki.sql.execute(index_query % ('sub_title', 'sub_title'))
+        scraperwiki.sql.execute(index_query % ('contests_title', 'title'))
+        scraperwiki.sql.execute(index_query % ('contests_sub_title', 'sub_title'))
+        scraperwiki.sql.execute(index_query % ('contests_election_id', 'id, state, election'))
+
+
+    def save_results(self, data):
+        """
+        Wrapper to save to results table with some checking.
+        """
+        # Ensure we have a list of data
+        if not isinstance(data, (list, tuple)):
+            data = [data]
+
+        # Go through the list make sure the basic fields are there
+        for d in data:
+            for f in self.results_schema:
+                if f not in d or type(d[f]) != self.results_schema[f]:
+                    raise Exception('Results row does not have the correct value for %s: %s' % (f, d))
+
+        # Save data
+        self.save(['id'], data, 'results', self.index_results)
+
+
+    def save_contests(self, data):
+        """
+        Wrapper to save to contests table with some checking.
+        """
+        # Ensure we have a list of data
+        if not isinstance(data, (list, tuple)):
+            data = [data]
+
+        # Go through the list make sure the basic fields are there
+        for d in data:
+            for f in self.contests_schema:
+                if f not in d or type(d[f]) != self.contests_schema[f]:
+                    raise Exception('Contests row does not have the correct value for %s: %s' % (f, d))
+
+        # Save data
+        self.save(['id'], data, 'contests', self.index_contests)
