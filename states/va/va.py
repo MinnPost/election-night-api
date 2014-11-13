@@ -169,6 +169,20 @@ class Scraper:
             else:
                 percent = 0.0
 
+            #figure out if we have a winner
+            contest_id = results[choice_id]['contest_id']
+            if contests[contest_id]['counted_precincts'] == contests[contest_id]['all_precincts']:
+                this_votes = results[choice_id]['votes']
+                other_votes = []
+                for c in results:
+                    if results[c]['contest_id'] == contest_id and c != choice_id:
+                        other_votes.append(results[c]['votes'])
+
+                winner = True
+                for v in other_votes:
+                    if v >= this_votes:
+                        winner = False
+
             # Save some data
             self.util.save_results({
                 'id': choice_id,
@@ -176,7 +190,7 @@ class Scraper:
                 'election': self.util.election_id,
                 'contest_id': results[choice_id]['contest_id'],
                 'choice': results[choice_id]['choice'],
-                'winner': False,
+                'winner': winner,
                 'party': results[choice_id]['party'],
                 'votes': results[choice_id]['votes'],
                 'percentage': percent,
