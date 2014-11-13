@@ -21,65 +21,83 @@ meta = {
 
         # The following are not required
 
-        # Base URL of files
-        'base_url': 'ftp://media:results@ftp.sos.state.mn.us/20141104/',
-        # Refernece to formates
-        'layout': 'http://electionresults.sos.state.mn.us/Select/DownloadFileFormats/20',
+        # Base URL of files.  FTP has traditionally been more stable, but that
+        # is no longer always true
+        'base_ftp': 'ftp://media:results@ftp.sos.state.mn.us/20141104/%s',
+        'base_http': 'http://electionresults.sos.state.mn.us/Results/MediaResult/20?mediafileid=%s',
+
+        # HTTP download list
+        # http://electionresults.sos.state.mn.us/Select/Download/20
+        # Refernece to formats
+        # http://electionresults.sos.state.mn.us/Select/DownloadFileFormats/20
 
         # Set of results to get data from
         'results': {
             'us_house_results': {
-                'url': 'ushouse.txt',
+                'ftp_file': 'ushouse.txt',
+                'http_file': '24',
                 'scope': 'us_house'
             },
             'us_senate_results': {
-                'url': 'ussenate.txt',
+                'ftp_file': 'ussenate.txt',
+                'http_file': '41',
                 'scope': 'state'
             },
             'attorney_general_results': {
-                'url': 'attorneygen.txt',
+                'ftp_file': 'attorneygen.txt',
+                'http_file': '35',
                 'scope': 'state'
             },
             'auditor_results': {
-                'url': 'auditor.txt',
+                'ftp_file': 'auditor.txt',
+                'http_file': '36',
                 'scope': 'state'
             },
             'governor_results': {
-                'url': 'Governor.txt',
+                'ftp_file': 'Governor.txt',
+                'http_file': '56',
                 'scope': 'state'
             },
             'secretary_results': {
-                'url': 'secofstate.txt',
+                'ftp_file': 'secofstate.txt',
+                'http_file': '34',
                 'scope': 'state'
             },
             'state_house_results': {
-                'url': 'LegislativeByDistrict.txt',
+                'ftp_file': 'LegislativeByDistrict.txt',
+                'http_file': '20',
                 'scope': 'state_house'
             },
             'judicial_results': {
-                'url': 'judicial.txt',
+                'ftp_file': 'judicial.txt',
+                'http_file': '37',
                 'scope': 'state'
             },
             'judicial_district_results': {
-                'url': 'judicialdst.txt',
+                'ftp_file': 'judicialdst.txt',
+                'http_file': '44',
                 'scope': 'district_court'
             },
             'county_results': {
-                'url': 'cntyRaceQuestions.txt',
+                'ftp_file': 'cntyRaceQuestions.txt',
+                'http_file': '88',
                 'scope': 'county'
             },
             # Includes both municpal questions (cityquestions.txt) and candidate results.
             'municipal_results': {
-                'url': 'local.txt',
+                'ftp_file': 'local.txt',
+                'http_file': '1',
                 'scope': 'municipal'
             },
             # Includes both school questions (SchoolQuestions.txt) and candidate results.
             'school_district_results': {
-                'url': 'sdraceQuesions.txt',
+                'ftp_file': 'sdraceQuesions.txt',
+                'http_file': '7',
                 'scope': 'school'
             },
             'hospital_results': {
-                'url': 'hospital.txt',
+                'ftp_file': 'hospital.txt',
+                'http_file': '90',
                 'scope': 'hospital'
             }
         },
