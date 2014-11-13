@@ -115,6 +115,7 @@ class ENAUtils(object):
         # is running but be default the db is created at scraperwiki.sqlite
         # where you are, but this should be empty since we don't use it
         scraperwiki.sql._State.db_path = 'sqlite:///%s' % self.db_file
+        scraperwiki.sql._State.connection()
 
         # Make sure the DB is efficient.  Synchronous off means that power outage
         # or possible interruption can corrupt database

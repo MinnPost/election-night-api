@@ -14,7 +14,7 @@ import requests
 import lxml.html
 
 
-class Scraper:
+class Scraper(object):
     """
     Class for Scraper.  This will be instantiated with the command line
     utility and will be passed the ENA utility object.
