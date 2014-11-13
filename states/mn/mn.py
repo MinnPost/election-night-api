@@ -32,7 +32,8 @@ class Scraper:
 
     def results(self, *args):
         """
-        Scrape results
+        Scrape results data.  This should be made more efficient since it
+        will be the one run most often.
 
         Called with command line like:
         ena MN results
@@ -120,3 +121,88 @@ class Scraper:
                 # Save data found
                 self.util.save_results(results_record)
                 self.util.save_contests(contests_record)
+
+
+
+    def areas(self, *args):
+        """
+        Scrape area meta data.  This does not need to be run often.
+
+        Called with command line like:
+        ena MN meta
+        """
+
+        # Go through and get the areas data
+        for r in self.util.election['areas']:
+            result_set = self.util.election['areas'][r]
+            #url = self.util.election['base_ftp'] % (result_set['ftp_file'])
+
+            url = self.util.election['base_http'] % (result_set['http_file'])
+
+            try:
+                scraped = self.util.scrape(url)
+                # latin-1 is to support the occasional accent character
+                rows = unicodecsv.reader(scraped.splitlines(), delimiter=';', quotechar='|', encoding='latin-1')
+            except Exception, err:
+                print 'Issue reading in area %s: %s' % (r, url)
+                raise
+
+            # Go through rows found
+            for row in rows:
+
+                # General data
+                parsed = {
+                    'id': r + '-',
+                    'areas_group': r,
+                    'county_id': None,
+                    'county_name': None,
+                    'ward_id': None,
+                    'precinct_id': None,
+                    'precinct_name': '',
+                    'state_senate_id': None,
+                    'state_house_id': None,
+                    'county_commissioner_id': None,
+                    'district_court_id': None,
+                    'soil_water_id': None,
+                    'school_district_id': None,
+                    'school_district_name': '',
+                    'mcd_id': None,
+                    'precincts': None,
+                    'name': '',
+                    'updated': self.util.timestamp()
+                }
+
+                if r == 'municipalities':
+                    parsed['id'] =    parsed['id'] + row[0] + '-' + row[2]
+                    parsed['county_id'] = row[0]
+                    parsed['county_name'] = row[1]
+                    parsed['mcd_id'] = row[2]
+                    parsed['name'] = row[1]
+
+                if r == 'counties':
+                    parsed['id'] =    parsed['id'] + row[0]
+                    parsed['county_id'] = row[0]
+                    parsed['county_name'] = row[1]
+                    parsed['precincts'] = row[2]
+
+                if r == 'precincts':
+                    parsed['id'] =    parsed['id'] + row[0] + '-' + row[1]
+                    parsed['county_id'] = row[0]
+                    parsed['precinct_id'] = row[1]
+                    parsed['precinct_name'] = row[2]
+                    parsed['state_senate_id'] = row[3]
+                    parsed['state_house_id'] = row[4]
+                    parsed['county_commissioner_id'] = row[5]
+                    parsed['district_court_id'] = row[6]
+                    parsed['soil_water_id'] = row[7]
+                    parsed['mcd_id'] = row[8]
+
+                if r == 'school_districts':
+                    parsed['id'] =    parsed['id'] + row[0]
+                    parsed['school_district_id'] = row[0]
+                    parsed['school_district_name'] = row[1]
+                    parsed['county_id'] = row[2]
+                    parsed['county_name'] = row[3]
+
+                # Save final
+                self.util.save(['id'], parsed, 'mn_areas')

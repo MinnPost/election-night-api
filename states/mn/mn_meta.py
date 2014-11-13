@@ -104,17 +104,17 @@ meta = {
         # Set of reference table that we can use later if needed
         'references': {
             'parties': {
-                'url': 'PartyTbl.txt',
+                'ftp_file': 'PartyTbl.txt',
                 'table': 'parties',
                 'type': 'parties'
             },
             'candidates': {
-                'url': 'cand.txt',
+                'ftp_file': 'cand.txt',
                 'table': 'candidates',
                 'type': 'candidates'
             },
             'local_candidates': {
-                'url': 'LocalCandTbl.txt',
+                'ftp_file': 'LocalCandTbl.txt',
                 'table': 'candidates',
                 'type': 'local_candidates'
             }
@@ -122,16 +122,20 @@ meta = {
         # Areas that can be used for boundary matching later
         'areas': {
             'counties': {
-                'url': 'Cntytbl.txt'
+                'ftp_file': 'Cntytbl.txt',
+                'http_file': '6'
             },
             'municipalities': {
-                'url': 'MunTbl.txt'
+                'ftp_file': 'MunTbl.txt',
+                'http_file': '8'
             },
             'precincts': {
-                'url': 'PrctTbl.txt'
+                'ftp_file': 'PrctTbl.txt',
+                'http_file': '4'
             },
             'school_districts': {
-                'url': 'SchoolDistTbl.txt'
+                'ftp_file': 'SchoolDistTbl.txt',
+                'http_file': '18'
             }
         },
         # Question body
