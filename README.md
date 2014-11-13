@@ -133,9 +133,9 @@ The architecture of this application is based from [ScraperWiki](https://scraper
 
 For election night, the idea is to install this on a resourceful server; overall the server should have most resources towards I/O as opposed to memory or CPU, though those things are needed as well.  The following instructions and the provided configuration are aimed at installing the API on an Ubuntu server (on EC2).
 
-As this is meant to emulate how ScraperWiki works, it uses Python, FastCGI and Nginx to create an API for the scraped data in the sqlite database.
-
 It is suggested to use `Ubuntu Server 14.04 LTS 64-bit (ami-9eaa1cf6)` AMI from EC2.  Your Security Group will need port `80` (HTTP) open and whatever port you will SSH into (default `22`).
+
+Note that these instructions are for a fresh server without other apps running on it.  Please look at the instructions and configurations in detail if you have existing apps running on there server.
 
 ### Code, libraries, and prerequisites
 
@@ -143,6 +143,20 @@ It is suggested to use `Ubuntu Server 14.04 LTS 64-bit (ami-9eaa1cf6)` AMI from 
 1. Install system and python base packages: `sudo aptitude install git-core git python-pip python-dev build-essential python-lxml sqlite3 nginx-full fcgiwrap`
 1. Install python base packages: `sudo pip install --upgrade pip && sudo pip install --upgrade virtualenv`
 1. Go to the home directory; you can put the code somewhere else but you may have to manually update other parts of the deploy: `cd ~`
-1. Get the code: `git clone https://github.com/MinnPost/minnpost-scraper-mn-election-results.git && cd minnpost-scraper-mn-election-results`
+1. Get the code: `git clone https://github.com/MinnPost/election-night-api.git && cd election-night-api`
 1. `sudo pip install -r requirements.txt`
-1. Add path so we have reference for later: `echo "export ENA_PATH=$(pwd)"" >> ~/.bash_profile`
+1. Add path so we have reference for later: `echo "export ENA_PATH=$(pwd)" >> ~/.bash_profile`
+
+### Webserver
+
+As this is meant to emulate how ScraperWiki works, it uses Dumptruck, FastCGI and Nginx to create an API for the scraped data in the sqlite database.
+
+1. [Dumptruck](https://github.com/scraperwiki/dumptruck-web) is a Python script to create an API on-top of an sqlite database.  It's built by ScraperWiki and also handles multiple user location.
+    1. `sudo git clone https://github.com/scraperwiki/dumptruck-web.git /var/www/dumptruck-web && sudo chown -R www-data:www-data /var/www/dumptruck-web && sudo pip install -r /var/www/dumptruck-web/requirements.txt`
+1. FCGIWrap is used to create an interface between the Dumptruck and Nginx.  We use a simple script to configure the number of children to use.
+    1. `sudo cp deploy/fcgiwrap /etc/default/fcgiwrap`
+    1. Restart service (note that this can take a minute): `sudo service fcgiwrap restart`
+1. Nginx is used as the top level web server.  It allows for caching and other niceties.  This copies our config, enables it and removes the default.
+    1. `sudo cp deploy/nginx-scraper-api.conf /etc/nginx/sites-available/nginx-scraper-api.conf && sudo ln -s /etc/nginx/sites-available/nginx-scraper-api.conf /etc/nginx/sites-enabled/nginx-scraper-api.conf && sudo rm /etc/nginx/sites-enabled/default`
+    1. Restart service: `sudo service nginx restart`
+    1. Test with something like: http://ec2-XX-XX-XX.compute-1.amazonaws.com/?box=ubuntu&method=sql&q=SELECT%20*%20FROM%20results%20LIMIT%2010
