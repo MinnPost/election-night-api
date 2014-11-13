@@ -39,8 +39,7 @@ class Scraper:
         """
 
         # Scrape
-        #scraped = self.util.scrape('https://voterinfo.sbe.virginia.gov/PublicSite/Public/results/Nov2014General.txt')
-        scraped = self.util.scrape('file:///Users/tomnehil/Desktop/Nov2014General.csv')
+        scraped = self.util.scrape(self.util.election['url'])
 
         rows = unicodecsv.reader(scraped.splitlines(), delimiter=',', quotechar='"', encoding='latin-1')
 
