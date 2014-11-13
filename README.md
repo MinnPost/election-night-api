@@ -18,9 +18,9 @@ A set of scrapers to create an API for election night applications.  This is aim
 
 ## Running
 
-* python ena/ena_command.py MN -e 20141104 areas
-* python ena/ena_command.py MN -e 20141104 results
-* python ena/ena_command.py MN -e 20141104 contests
+* bin/ena MN -e 20141104 areas
+* bin/ena MN -e 20141104 results
+* bin/ena MN -e 20141104 contests
 
 ## Tests
 

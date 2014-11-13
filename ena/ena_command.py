@@ -84,12 +84,9 @@ examples:
         # Call method
         method = getattr(scraper, self.args.function, None)
         if method and callable(method):
-            method(*self.args.args)
+            method(*self.args.args if self.args.args is not None else [])
         else:
             raise Exception('Method %s not found in %s scraper.' % (self.args.function, self.args.state))
-
-        # Done
-        self.out('- Done.\n')
 
 
     def out(self, message):
