@@ -172,6 +172,17 @@ class ENAUtils(object):
             self.logger('Error thrown while saving to table %s, with data: %s' % (table, data))
             raise
 
+    def has_table(self, table):
+        """
+        Checks if table exists in database.
+
+        Arguments:
+        table - String name of table
+        """
+        table_query = "name FROM sqlite_master WHERE type='table' AND name='%s'"
+        table_found = self.sql.select(table_query % (table))
+        return table_found != []
+
 
     def save_meta(self, key, value):
         """
