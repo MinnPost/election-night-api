@@ -68,6 +68,14 @@ examples:
             help = 'Turn on debugging.'
         )
 
+        # Turn on debugging
+        self.parser.add_argument(
+            '--remove-db',
+            dest = 'remove_db',
+            action = 'store_true',
+            help = 'Remove the database before running scraper.  This is helpful for development and should not be used for production.'
+        )
+
         # Parse options
         self.args = self.parser.parse_args()
 
@@ -77,6 +85,10 @@ examples:
 
         # Load up utility
         util = ENAUtils(self.args.state, self.args.election, self.args.debug)
+
+        # Remove database
+        if self.args.remove_db and os.path.exists(util.db_file):
+            os.remove(util.db_file)
 
         # Create scraper instance
         scraper = util.Scraper(util)
