@@ -46,7 +46,17 @@ class Scraper:
 
         rows.next()
 
+
+        contests = {}
+        results = {}
+
         for row in rows:
+            #Establish IDs
+
+            contest_id = str(row[12])
+
+            if contest_id not in contests:
+                contests[contest_id] = {}
 
             #Determine if candidate or ballot question -- ID in different column
             if row[11] != '':
@@ -54,46 +64,96 @@ class Scraper:
             else:
                 choice_id = str(row[13])
 
+            if choice_id not in results:
+                results[choice_id] = {}
+
+            if 'contest_id' not in results[choice_id]:
+                results[choice_id]['contest_id'] = contest_id
+
+            precinct_id = row[4] + "-" + row[8]
+
+            #test if precinct ID is already in list of precincts
+            if 'all_precincts' in contests[contest_id]:
+                if precinct_id not in contests[contest_id]['all_precincts'] and '##' not in precinct_id:
+                    contests[contest_id]['all_precincts'].append(precinct_id)
+            else:
+                if '##' not in precinct_id:
+                    contests[contest_id]['all_precincts'] = [precinct_id]
+
+            #make separate list of precincts that actually have non-blank vote
+            #totals (i.e. the precinct has reported) Precincts with ## are not
+            #counted towar the total
+            if 'counted_precincts' in contests[contest_id]:
+                if precinct_id not in contests[contest_id]['counted_precincts'] and row[20] != '' and '##' not in precinct_id:
+                    contests[contest_id]['counted_precincts'].append(precinct_id)
+            else:
+                if row[20] != '' and '##' not in precinct_id:
+                    contests[contest_id]['counted_precincts'] = [precinct_id]
+
+            #Candidate names
+            if 'choice' not in results[choice_id]:
+                if row[9] != '':
+                    results[choice_id]['choice'] = row[9]
+                else:
+                    results[choice_id]['choice'] = row[6]
+
+            #Candidate parties
+            if 'party' not in results[choice_id]:
+                results[choice_id]['party'] = row[17]
+
+            #add votes to result and to contest total
             votes = int(row[20]) if row[20] != '' else 0
-            contest_votes_total = votes
 
-            if self.util.has_table('results') and self.util.has_table('contests'):
+            if 'votes' in results[choice_id]:
+                results[choice_id]['votes'] += votes
+            else:
+                results[choice_id]['votes'] = votes
 
-                #Read current vote total for this result row
-                result_votes = self.util.sql.select("* from results where id='%s'" % choice_id)
-                if result_votes != []:
-                    votes += result_votes[0]['votes']
+            if 'total_votes' in contests[contest_id]:
+                contests[contest_id]['total_votes'] += votes
+            else:
+                contests[contest_id]['total_votes'] = votes
 
-                #Also read current vote total for contest overall
-                contest_votes = self.util.sql.select("* from contests where id='%s'" % row[12])
-                if contest_votes != []:
-                    contest_votes_total += contest_votes[0]['total_votes']
+            #contest title
+            if 'title' not in contests[contest_id]:
+                contests[contest_id]['title'] = row[5]
+                #add description for things with multiple districts, like US Rep
+                if row[15] != 'Statewide':
+                    contests[contest_id]['title'] += ' ' + row[15]
 
-            #Precinct handling. The file is by precinct, so we need to total
-            #these up for contests table.
+        for choice_id in results:
+            #calculate percentage for the candidate
+            if 'total_votes' in contests[results[choice_id]['contest_id']]:
+                percent = float(results[choice_id]['votes'])/float(contests[results[choice_id]['contest_id']]['total_votes'])
+            else:
+                percent = 0.0
 
-            # Save some data (Example)
+            # Save some data
             self.util.save_results({
                 'id': choice_id,
                 'state': self.util.state,
                 'election': self.util.election_id,
-                'contest_id': row[12],
-                'choice': row[9] if row[9] != '' else row[6], #9 is cand. name, 6 is ballot q
+                'contest_id': results[choice_id]['contest_id'],
+                'choice': results[choice_id]['choice'],
                 'winner': False,
-                'party': row[17],
-                'votes': votes,
-                'percentage': float(votes)/float(contest_votes_total) if contest_votes_total != 0 else 0.0,
+                'party': results[choice_id]['party'],
+                'votes': results[choice_id]['votes'],
+                'percentage': percent,
                 'updated': self.util.timestamp()
             });
+        for contest_id in contests:
+            #calculate the percent of precincts reporting
+            percent = float(len(contests[contest_id]['counted_precincts']))/float(len(contests[contest_id]['all_precincts']))
+
             self.util.save_contests({
-                'id': row[12],
+                'id': contest_id,
                 'state': self.util.state,
                 'election': self.util.election_id,
-                'title': row[5] + ' ' + row[15] if row[15] != 'Statewide' else row[5],
+                'title': contests[contest_id]['title'],
                 'sub_title': '',
-                'precincts_reporting': 10, #going to have to calculate this
-                'total_precincts': 100, #also going to have to calculate this
-                'percent_reporting': 10.0, #and calculate this
-                'total_votes': contest_votes_total,
+                'precincts_reporting': len(contests[contest_id]['counted_precincts']),
+                'total_precincts': len(contests[contest_id]['all_precincts']),
+                'percent_reporting': percent,
+                'total_votes': contests[contest_id]['total_votes'],
                 'updated': self.util.timestamp()
             });
