@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 
 """
-This is an example scraper.  You should update instaces of 'example' with the
-state you are working on.
+This is an example scraper.  You should update instances of 'example' with the
+abbreviation for the state you are working on.
 
 This is the main scraper for this state.  It needs to have a class called
 Scraper.  The constructor for the class should take in an object which
@@ -53,18 +53,21 @@ class Scraper(object):
         is a command name for the method that needs to be updated most
         often on election night.
 
-        The data for states varies wildly and the following is just some
-        example code and may not fit your needs at all.
+        The data for each state varies and the following is just some
+        example code that may not totally fit your needs.
         """
 
-        # You can get a URL with something like
+        # Get the URL with the election results file with something like
         scraped = sql.util.scrape(self.util.election.data_file)
 
-        # You can also parse a CSV if that is the format it comes in with
+        # You can also parse a CSV if that is the file format. Other formats,
+        # like JSON or .xls may require other parsing libraries.
         rows = unicodecsv.reader(scraped.splitlines(), delimiter=';', quotechar='|', encoding='latin-1')
 
         # You can then go through rows like this and save the results
-        # and information about contests
+        # and information about contests. Alternatively, consider adding data to
+        # dictionaries as you iterate through the rows, then iterating through
+        # the dictionaries and saving to the database.
         for row in rows:
 
             # Save results data
