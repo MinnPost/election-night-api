@@ -1,14 +1,32 @@
 # Election Night API
 
-A set of scrapers to create an API for election night applications.  This is aimed at small to medium orgs that cannot afford services like AP or Reuters elections, or orgs that need more local results.  This is also aimed at state-level results and for states that have some sort of election night live feed.
+A set of scrapers to create an API for election night applications.  This is aimed at small to medium orgs that cannot afford services like AP or Reuters elections, or orgs that need more local results.  This works best with states that have an election night feed.
 
-## Running scraper
+The architecture of this application is based from [ScraperWiki](https://scraperwiki.com) a platform for scraping and serving data.  The main reason for this decision is so that on or around election night, an organization can run its own server with high resources, while using the [free](https://scraperwiki.com/pricing) (for [journalists](https://wordpress.scraperwiki.com/solutions/data-journalism/)) infrastructure of ScraperWiki the rest of the year.
 
-The `bin/ena` command is a wrapper to run each state scraper methods.  It is arbitrary what method to run, as the need to run certain methods on certain schedules can change from state to state.
+There are two parts to the API.
+
+## The scraper tool
+
+The `bin/ena` command is a wrapper to run each states' scraper methods.  It is arbitrary what method to run, as the need to run certain methods on certain schedules can change from state to state.
 
 * Get help on command: `bin/ena -h`
 * Update results for the newest election in MN: `bin/ena MN results`
 * Update areas data for specific election in MN: `bin/ana MN areas -e 20141104`
+
+## The API
+
+The API allows for arbitrary SQL selects of the data and returns JSON.  This means it is easy to get at whatever data is needed.  There are 3 possible servers you may be using.
+
+* For development, you can use the Local API server (see below).
+* For production, i.e. election night, see the Deploy instructions below.
+* During off-season, you can save money by using ScraperWiki
+
+Though the URL will change a bit, the `?q=` paramater will still be in the input mechanism for the query.  Here are some examples.
+
+* Get all contests: `/?sql=SELECT * contests`
+* Get a specific contest with results: `/?q=SELECT * FROM contests AS c JOIN results AS r ON c.id = r.contest_id AND c.state = r.state AND s.election = r.election WHERE c.id = 'some-contest-id'`
+
 
 ## Install
 
@@ -31,14 +49,15 @@ You may have the following already installed.
 1. (optional) Make a virtualenv to work in: `mkvirtualenv election-night-api`
 1. Install libraries: `pip install -r requirements.txt`
 
+## Development
+
 ### Local API
 
-For testing purposes, it is probably easier to use the lightweight, not production ready, API application.
+For testing purposes, it is probably easier to use the lightweight, not production ready, local API application.
 
+1. Scrape some data with the scraper tool.
 1. Run local API with: `python tests/local_api.py`
-1. Make requests to: `http://localhost:5000/?q=SELECT * FROM contests LIMIT 10`
-
-## Development
+1. Make requests similar to: `http://localhost:5000/?q=SELECT * FROM contests LIMIT 10`
 
 ### Adding or managing a state
 
@@ -125,10 +144,6 @@ You can also save whatever data you want in the database for reference or queryi
 
 The utility object has a `save` method for saving any data into any table as needed.
 
-## Architecture
-
-The architecture of this application is based from [ScraperWiki](https://scraperwiki.com) a platform for scraping and serving data.  The main reason for this decision is so that on or around election night, an organization can run its own server with high resources, while using the [free](https://scraperwiki.com/pricing) (for [journalists](https://wordpress.scraperwiki.com/solutions/data-journalism/)) infrastructure of ScraperWiki the rest of the year.
-
 ## Deploy
 
 For election night, the idea is to install this on a resourceful server; overall the server should have most resources towards I/O as opposed to memory or CPU, though those things are needed as well.  The following instructions and the provided configuration are aimed at installing the API on an Ubuntu server (on EC2).
@@ -157,6 +172,22 @@ As this is meant to emulate how ScraperWiki works, it uses Dumptruck, FastCGI an
     1. `sudo cp deploy/fcgiwrap /etc/default/fcgiwrap`
     1. Restart service (note that this can take a minute): `sudo service fcgiwrap restart`
 1. Nginx is used as the top level web server.  It allows for caching and other niceties.  This copies our config, enables it and removes the default.
-    1. `sudo cp deploy/nginx-scraper-api.conf /etc/nginx/sites-available/nginx-scraper-api.conf && sudo ln -s /etc/nginx/sites-available/nginx-scraper-api.conf /etc/nginx/sites-enabled/nginx-scraper-api.conf && sudo rm /etc/nginx/sites-enabled/default`
+    1. `sudo cp deploy/nginx-scraper-api.conf /etc/nginx/sites-available/election-night-api.conf && sudo ln -s /etc/nginx/sites-available/election-night-api.conf /etc/nginx/sites-enabled/election-night-api.conf && sudo rm /etc/nginx/sites-enabled/default`
     1. Restart service: `sudo service nginx restart`
-    1. Test with something like: http://ec2-XX-XX-XX.compute-1.amazonaws.com/?box=ubuntu&method=sql&q=SELECT%20*%20FROM%20results%20LIMIT%2010
+    1. Test with something like: http://ec2-XX-XX-XX.compute-1.amazonaws.com/sql?box=ubuntu/election-night-api&method=sql&q=SELECT%20*%20FROM%20results%20LIMIT%2010
+        * The `box` paramater is essentially the directory path where the `scraperwiki.sqlite` file resides.  TODO: Figure out how to make nginx provide a default for this.
+        * Update the `box` parameter if code was installed in another place.
+
+### Cron
+
+For election night, you will want the scraper tool to run as often as possible.  Utilizing cron for this is best.
+
+* TODO
+
+## Migration to ScraperWiki
+
+For non-election time, it makes sense to save resources and use the ScraperWiki architecture.  Run the following to get the scraper up on the ScraperWiki architecture.
+
+1. Make sure you have an account on ScraperWiki
+1. Create new, or use the existing, scraper for the election results.
+1. Run ...
