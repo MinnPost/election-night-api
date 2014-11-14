@@ -73,6 +73,36 @@ Scraping is arbitrary, though there are some basics (see Data modeling below) an
 1. The `test_xx.py` file is to hold tests to help unit test your files.
     1. Rename `test_example.py` to `test_xx.py`
 
+### Writing a scraper
+
+You need to write code to translate the election results file provided by your Secretary of State or State Elections Board into a set of data fields that can be stored in the database. Since election results file formats vary widely from state to state, each state will require a custom approach, but below are some general guidelines for writing the scraper.
+
+#### Examine data
+
+Spend time becoming familiar with your state's election files by studying example files or files from recent elections. Are the results provided for the entire race or by precinct? Does each race have a unique identifier? Does each candidate? What results data is provided — raw vote totals, vote percentage or both?
+
+#### Unique IDs
+
+At a minimum, each choice in the election (e.g. candidates and ballot question responses)  and each contest must have unique identifiers. In some cases, these will already exist in a single field in the results file and can be read into your scraper (have care to verify that the IDs are in fact unique). If no single field contains a unique identifier, you will need to construct one from the data fields inside your scraper. For example, in the Minnesota scraper, we construct an ID string for each contest by combining fields for state, county, precinct district and office:
+
+  ```
+  #id-State-County-Precinct-District-Office
+  base_id = 'id-' + row[0] + '-' + row[1] + '-' + row[2] + '-' + row[5] + '-' + row[3]
+  ```
+
+For more information on required fields, see **Data modeling** below.
+
+#### Read the file
+In general, you'll want to iterate through your file, manipulate the data to match the required data fields, and save those results, either by saving them to a dictionary and then writing the dictionary to the database, or by saving directly to the database.
+
+At a minimum, you need data for a results table (data for each choice) and a contests table (data for each race/office).
+
+The minimum required results fields are `id, state, election, updated, contest_id, choice, party, votes, percentage, winner`. The minimum required contests fields are `id, state, election, updated, title, precincts_reporting, total_precincts, percent_reporting, total_votes, seats`. (Note: state, election and updated can be filled using `self.util` methods. See **Data modeling** below.)
+
+In both cases, additional fields can be added to the tables as needed for your specific elections. The `id` in the contests table should match the `contest_id` in the results table and is used to link candidates/options to their overall races. For more information on required fields, see *Data modeling* below.
+
+Some of these data fields may be accessible directly from the results file, but others will require calculation or other manipulation inside the scraper script. Look at existing state scrapers for some examples of this data processing.
+
 ### Utility library
 
 In the `Scraper` object, a `utility` object will be passed in.  This will be a `ENAUtility` class instance with connections made to the election that is being processed.
