@@ -101,6 +101,12 @@ In both cases, additional fields can be added to the tables as needed for your s
 
 Some of these data fields may be accessible directly from the results file, but others will require calculation or other manipulation inside the scraper script. Look at existing state scrapers for some examples of this data processing.
 
+#### Manual data
+
+In some cases, you may want to add in additional election data not available in the election results file. An easy way to do this is to create a Google Spreadsheet with the additional data. The `utility.google_spreadsheet(spreadsheet_id, worksheet_id, gs_types_dict)` method gives you all the rows in a specific Google Spreadsheet which you can iterate over to read additional data for writing to the `results` or `contests` tables. You probably want to match the unique IDs for either results or contests in this spreadsheet.
+
+For more information, see **Utility library** below.
+
 ### Utility library
 
 In the `Scraper` object, a `utility` object will be passed in. This will be a `ENAUtility` class instance with connections made to the election that is being processed.
