@@ -25,9 +25,9 @@ examples:
 
     """
 
-    def __init__(self):
+    def parse_args(self):
         """
-        Constructor.
+        Use command line.
         """
         self.parser = argparse.ArgumentParser(
             description = self.description,
@@ -127,8 +127,3 @@ examples:
         """
         sys.stdout.write(message)
         sys.stdout.flush()
-
-
-# Handle execution
-if __name__ == '__main__':
-    ena_command = ENACommand()

@@ -11,3 +11,4 @@ from ena_command import ENACommand
 
 if __name__ == '__main__':
   enac = ENACommand()
+  enac.parse_args()
