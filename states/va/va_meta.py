@@ -12,12 +12,13 @@ from datetime import date
 # command line to scrape a specific election.  The utility tool will try
 # to use the newest election ID so YYYYMMDD is suggested.
 meta = {
-    # Eleciton ID
+    # Election ID
     '20141104': {
         # Date of election
         'date': date(2014, 11, 04),
         # Whether primary
-        'primary': False
+        'primary': False,
+        'url': 'https://voterinfo.sbe.virginia.gov/PublicSite/Public/results/Nov2014General.txt'
 
         #...
 
