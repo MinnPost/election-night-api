@@ -78,7 +78,7 @@ class ENAUtils(object):
         sys.path.append(self.scraper_dir)
 
         # Get meta file
-        self.meta_file = os.path.join(self.scraper_dir, state, '%s_meta.py' % self.state)
+        self.meta_file = os.path.join(self.scraper_dir, self.state, '%s_meta.py' % self.state)
         if os.path.exists(self.meta_file) and os.path.isfile(self.meta_file):
             self.meta = __import__('%s.%s_meta' % (self.state, self.state),
                 globals(), locals(), ['meta'], -1).meta
