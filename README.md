@@ -224,11 +224,14 @@ For election night, and leading up to it, you will want the scraper tool to run 
 * Log to home directory: `* * * * * $ENA_PATH/deploy/continuous-wrapper.sh MN results > ~/logs/ena.log`
 * Run less important scrapes: `0 7 * * * $ENA_PATH/bin/ena MN questions`
 
-## Migration to ScraperWiki
+## ScraperWiki deploy
 
-For non-election time, it makes sense to save resources and use the ScraperWiki architecture.  Run the following to get the scraper up on the ScraperWiki architecture.
+For non-election time, it makes sense to save resources and use the ScraperWiki architecture.  We need to install the application on our scraper, then run commands as needed.
 
 1. Make sure you have an account on ScraperWiki
-1. Create new, or use the existing, scraper for the election results.
-1. SSH into the Code in your Browser tool
-1. git clone https://github.com/MinnPost/election-night-api.git
+1. Create new, or use the existing, scraper for the election results.  Select Python for the language.
+1. On your command line, SSH into the "Code in your Browser" tool; click on the tab and use the gear icon drop-down.  This should be something like: `ssh xxxxx@premium.scraperwiki.com`
+1. Get the code: `git clone https://github.com/MinnPost/election-night-api.git`
+1. Back in the ScraperWiki editor, copy the code from `deploy/scraperwiki-example.py` from this repository and then edit the scraping commands that you need.
+1. Schedule it!  Probably daily or weekly.
+1. Switch out the API URL in your application.  You can use "Query with SQL" tool in the ScraperWiki interface to get the URL, but it should be something similar to: https://premium.scraperwiki.com/xxxxx/yyyyyy/sql/?q=
