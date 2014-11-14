@@ -2,3 +2,28 @@
 
 .mp pre code {
 }
+
+.mp #demo-container {
+  margin-top: 3em;
+  margin-bottom: 3em;
+  min-height: 10em;
+
+  background-color: #f8f8f8;
+  padding: 2em;
+}
+
+.mp #demo-container h4 {
+  margin-bottom: 0em;
+}
+
+.mp #demo-container .contest {
+  margin-bottom: 2em;
+}
+
+.mp #demo-container form {
+  margin-right: 4em;
+}
+
+.mp #demo-container table tbody {
+  background-color: #FFFFFF;
+}

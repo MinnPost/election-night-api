@@ -22,9 +22,9 @@
 
       <p class="large">A set of tools, configurations, and instructions to collect and serve election results on election night &mdash; the Super Bowl of data news &mdash; while still providing an off-season service and focusing on saving resources as much as possible.  A project of <a href="http://minnpost.com" target="_blank">MinnPost</a> with support by <a href="http://opennews.org/">OpenNews</a>.</p>
 
-      <div class="demo-container">
-        <p class="xlarge text-center">DEMO HERE</p>
-      </div>
+
+      <div id="demo-container"></div>
+
 
       <p>If you work at a small organization without access to AP or Reuters election data feeds, or are looking for more local results than these organizations provide, the Election Night API is here to help.</p>
 
@@ -140,6 +140,71 @@ $ python tests/local_api.py
       </div>
 
 
+      <script id="demo-template" type="text/ractive">
+
+        <div class="component-label">Virgina results demo</div>
+
+        {{#isLoading}}
+          <div class="loading-container">
+            <i class="loading"></i> Loading...
+          </div>
+        {{/isLoading}}
+
+        {{#message}}
+          <div class="alert warning">{{ message}}</div>
+        {{/message}}
+
+        <div class="row">
+          <div class="column-medium-50">
+            <h4>Search contests</h4>
+
+            <form role="form" on-submit="doSearch">
+              <div class="form-item">
+                <input type="text" id="title-keyword" placeholder="United States Senate" value="{{ titleSearch }}">
+              </div>
+
+              <button type="submit" class="button primary">Search</button>
+            </form>
+          </div>
+
+          <div class="column-medium-50">
+            {{^contests}}
+              <p class="small text-center">No contests found.</p>
+            {{/contests}}
+
+            {{#contests:ci}}
+              <div class="contest">
+                <h4>{{ title }}</h4>
+                <p class="small">{{ precincts_reporting }} of {{ total_precincts }} precincts reporting.</p>
+
+                <div class="table-responsive-medium">
+                  <table>
+                    <thead>
+                      <tr>
+                        <th></th><th>Candidate</th><th>Party</th><th>Percent</th>
+                      </tr>
+                    </thead>
+
+                    <tbody>
+                      {{#results:ri}}
+                        <tr>
+                          <td>{{#winner}}<i class="fa fa-check"></i>{{/winner}}</td>
+                          <td>{{ choice }}</td>
+                          <td><div class="label bg-color-political-{{ party.substring(0, 1).toLowerCase() }}">{{ party }}</div></td>
+                          <td>{{ Math.round(percentage * 100) / 100 }}%</td>
+                        </tr>
+                      {{/results}}
+                    </tbody>
+                  </table>
+                </div>
+            {{/contests}}
+          </div>
+        </div>
+
+      </script>
+
+
+      <script src="demo/bower_components/jquery/dist/jquery.js"></script>
       <script src="demo/bower_components/underscore/underscore.js"></script>
       <script src="demo/bower_components/ractive/ractive.min.js"></script>
       <script src="demo/bower_components/highlightjs/highlight.pack.js"></script>

@@ -18,6 +18,7 @@
   "dependencies": {
     "minnpost-styles": "master",
     "ractive": "~0.6.1",
-    "highlightjs": "~8.3.0"
+    "highlightjs": "~8.3.0",
+    "jquery": "~2.1.1"
   }
 }
