@@ -7,6 +7,7 @@ ena_scraper --state=MN --election=20141104 results
 """
 
 import logging, os, sys, argparse
+from datetime import datetime
 from ena_util import ENAUtils
 
 
@@ -44,7 +45,7 @@ examples:
             help = 'The function or method to call.'
         )
 
-        # Function
+        # Function arguments
         self.parser.add_argument(
             '-a', '--args',
             dest = 'args',
@@ -52,7 +53,7 @@ examples:
             nargs = '+'
         )
 
-        # Bucket path
+        # Election
         self.parser.add_argument(
             '-e', '--election',
             dest = 'election',
@@ -88,6 +89,7 @@ examples:
 
         # Remove database
         if self.args.remove_db and os.path.exists(util.db_file):
+            self.out('Removing DB. \n')
             os.remove(util.db_file)
 
         # Create scraper instance
@@ -96,7 +98,16 @@ examples:
         # Call method
         method = getattr(scraper, self.args.function, None)
         if method and callable(method):
+            # Time it
+            start = datetime.now()
+            self.out('Running %s scraper for %s ... ' % (self.args.function, self.args.state))
+
+            # Run
             method(*self.args.args if self.args.args is not None else [])
+
+            # How much time passed
+            end = datetime.now() - start
+            self.out('Done (in %.2f min). \n' % (round(float(end.seconds) / 60, 2)))
         else:
             raise Exception('Method %s not found in %s scraper.' % (self.args.function, self.args.state))
 
@@ -106,6 +117,7 @@ examples:
         Wrapper around stdout
         """
         sys.stdout.write(message)
+        sys.stdout.flush()
 
 
 # Handle execution

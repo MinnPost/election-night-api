@@ -211,9 +211,11 @@ As this is meant to emulate how ScraperWiki works, it uses Dumptruck, FastCGI an
 
 ### Cron
 
-For election night, you will want the scraper tool to run as often as possible.  Utilizing cron for this is best.
+For election night, and leading up to it, you will want the scraper tool to run on an interval, probably with some methods running occasionally, while at least one running continuously.  Utilizing cron for this is best.  There is a helpful wrapper, `deploy/continuous-wrapper.sh` that will run the scraper tool continuously.
 
-* TODO
+* Get results continuously: `* * * * * $ENA_PATH/deploy/continuous-wrapper.sh MN results`
+* Log to home directory: `* * * * * $ENA_PATH/deploy/continuous-wrapper.sh MN results > ~/logs/ena.log`
+* Run less important scrapes: `0 7 * * * $ENA_PATH/bin/ena MN questions`
 
 ## Migration to ScraperWiki
 
