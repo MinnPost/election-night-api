@@ -1,0 +1,23 @@
+{
+  "name": "Election Night API Demo",
+  "version": "0.0.1",
+  "homepage": "https://github.com/MinnPost/election-night-api",
+  "authors": [
+    "Alan Palazzolo <apalazzolo@minnpost.com>"
+  ],
+  "description": "Demo and project page for the Election Night API project",
+  "license": "MIT",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "minnpost-styles": "master",
+    "ractive": "~0.6.1",
+    "highlightjs": "~8.3.0"
+  }
+}

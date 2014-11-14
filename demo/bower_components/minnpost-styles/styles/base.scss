@@ -1,0 +1,25 @@
+/**
+ * For inclusion via SASS with base parts of MinnPost Styles.
+ */
+
+@import "compass";
+@import "compass/css3";
+@import "compass/css3/user-interface";
+@import "compass/support";
+@import "_fonts";
+@import "_variables";
+@import "_functions";
+@import "_mixins";
+@import "_reset";
+
+// Suport down to IE8
+$legacy-support-for-ie8: true;
+
+#{$selector-wrapper} {
+  @import "_helpers";
+  @import "_grid";
+  @import "_layout";
+  @import "_typography";
+  @import "_browser";
+  @import "_minnpost";
+}

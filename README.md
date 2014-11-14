@@ -1,6 +1,8 @@
 # Election Night API
 
-A set of scrapers to create an API for election night applications. This is aimed at small to medium orgs that cannot afford services like AP or Reuters elections, or orgs that need more local results. This works best with states that have an election night feed.
+A set of tools, configurations, and instructions to collect and serve election results on election night - the Super Bowl of data news - while still providing an off-season service and focusing on saving resources as much as possible.
+
+This is aimed at small to medium orgs that cannot afford services like AP or Reuters elections, or orgs that need more local results. This works best with states that have an election night feed.
 
 The architecture of this application is based on [ScraperWiki](https://scraperwiki.com), a platform for scraping and serving data.  The main reason for this is so that on or around election night, an organization can run its own server with high resources, while using the [free](https://scraperwiki.com/pricing) (for [journalists](https://wordpress.scraperwiki.com/solutions/data-journalism/)) infrastructure of ScraperWiki the rest of the year.
 
@@ -64,7 +66,7 @@ For testing purposes, it is probably easier to use the lightweight, not producti
 
 The data you need to scrape will vary from state to state, though there are some basics (see **Writing a scraper** and **Data modeling** below) and specific files and names that need to be followed. The best way to start is to copy the example and look at the comments in the file.
 
-1. `cp states/example states/xx`
+1. Copy example: `cp -r states/example states/xx`
 1. The `xx_meta.py` file manages each information and configuration about each election in the state.  Create the configuration as is needed for your state; there are only a couple required field.
     1. Rename `example_meta.py` to `xx_meta.py`
     1. Change the Election ID. Suggested format is date of the election in the form YYYYMMDD
@@ -93,6 +95,7 @@ At a minimum, each choice in the election (e.g. candidates and ballot question r
 For more information on required fields, see **Data modeling** below.
 
 #### Read the file
+
 In general, you'll want to iterate through your file, manipulate the data to match the required data fields, and save those results, either by saving them to a dictionary and then writing the dictionary to the database, or by saving directly to the database.
 
 At a minimum, you need data for a results table (data for each choice) and a contests table (data for each race/office).
@@ -181,7 +184,7 @@ You can also save whatever data you want in the database for reference or queryi
 
 The utility object has a `save` method for saving any data into any table as needed.
 
-## Deploy
+## Election Night deploy
 
 For election night, the idea is to install this on a resourceful server; overall the server should have most resources towards I/O as opposed to memory or CPU, though those things are needed as well. The following instructions and the provided configuration are aimed at installing the API on an Ubuntu server (on EC2).
 

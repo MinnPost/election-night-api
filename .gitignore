@@ -1,9 +1,12 @@
 logs
 !bin
 
+# For easy gh-pages
+!bower_components
+!dist
+
 node_modules
 components
-bower_components
 false
 .tmp
 *.sqlite

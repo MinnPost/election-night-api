@@ -1,66 +1,150 @@
-<link rel="stylesheet" href="https://s3.amazonaws.com/data.minnpost/projects/minnpost-styles/0.0.2/minnpost-styles.min.css" type="text/css">
+<!DOCTYPE html>
+<html class="no-js">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Election Night API | MinnPost Code</title>
+    <meta name="description" content="TElection Night API">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
 
-<div class="mp">
-  <div class="text-block large">
+    <base target=”_blank” />
 
-    <h1>Election Night API</h1>
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css">
+    <link rel="stylesheet" href="demo/bower_components/highlightjs/styles/github.css">
+    <link rel="stylesheet" href="demo/bower_components/minnpost-styles/dist/minnpost-styles.min.css">
+    <link rel="stylesheet" href="demo/demo.css">
+  </head>
+  <body class="mp">
 
-    <p class="small">A project of <a href="http://minnpost.com" target="_blank">MinnPost</a></p>
+    <div class="minnpost-page-container">
 
-    <p>If you work at a small organization without access to AP or Reuters election
-    data feeds, or are looking for more local results than these organizations
-    provide, the Election Night API is here to help.</p>
+      <h1>Election Night API</h1>
 
-    <p>The purpose of this software is to make election results published by a state's
-    Secretary of State or Board of Elections on election night available for use on
-    websites or in other applications via an API.</p>
+      <p class="large">A set of tools, configurations, and instructions to collect and serve election results on election night &mdash; the Super Bowl of data news &mdash; while still providing an off-season service and focusing on saving resources as much as possible.  A project of <a href="http://minnpost.com" target="_blank">MinnPost</a> with support by <a href="http://opennews.org/">OpenNews</a>.</p>
 
-    <p>This software will work best in states that publish election results live on
-    election night in somewhat machine-friendly formats, like JSON, text files or
-    maybe even Microsoft Excel.</p>
+      <div class="demo-container">
+        <p class="xlarge text-center">DEMO HERE</p>
+      </div>
 
-    <p>Detailed setup instructions can be found in the
-    <a href="https://github.com/MinnPost/election-night-api#election-night-api">README</a>,
-    but the general process for setting this up is this:</p>
+      <p>If you work at a small organization without access to AP or Reuters election data feeds, or are looking for more local results than these organizations provide, the Election Night API is here to help.</p>
 
-    <h2>Install the code and dependencies</h2>
+      <p>The purpose of this software is to make election results published by a state's Secretary of State or Board of Elections on election night available for use on websites or in other applications via an API.</p>
 
-    <p>Election Night API is built in Python with architecture based on ScraperWiki. It
-    can be run in three ways:</p>
+      <p>This software will work best in states that publish election results live on election night in somewhat machine-friendly formats, like JSON, text files or maybe even Microsoft Excel, but you can still manually collect data in something like Google Spreassheets and supplement the results.</p>
 
-    <ul>
-      <li>Locally, for development purposes</li>
-      <li>On a dedicated server, for election night</li>
-      <li>On ScraperWiki, for after the election when results will not be updated frequently</li>
-    </ul>
+      <p>Detailed setup instructions can be found in the <a href="https://github.com/MinnPost/election-night-api#election-night-api">README</a>.</p>
 
-    <h2>Write the scraper</h2>
 
-    <p>Election Night API contains a basic template for scraping election night results
-    files, but because each state and election is pretty different, custom scripts
-    for parsing the results files must be written. You'll need to be able to write
-    some basic Python to build a scraper for your state. There's some basic
-    guidance in the <a href="https://github.com/MinnPost/election-night-api#adding-or-managing-a-state">README</a>
-    and in the <a href="https://github.com/MinnPost/election-night-api/blob/master/states/example/example.py">example code</a>.</p>
 
-    <h2>Deploy the API</h2>
 
-    <p>The API is intended to be deployed on a resourceful server, such as an Ubuntu
-    server on EC2, on election night, to be able to handle high demand for the
-     results. <a href="https://github.com/MinnPost/election-night-api#deploy">Detailed instructions</a>
-     can be found in the README.</p>
+      <h2>Install</h2>
 
-    <h2>Display results</h2>
+      <p>A standard Python install.  See the <a href="https://github.com/MinnPost/election-night-api#install">full instructions</a> for more detail.</p>
 
-    <p>Although the main purpose of this software is to provide API access to
-      election results, the usual reason for doing this is to then display those
-      results on a web page. For an example of one way to do that, see the
-      <a href="demo">demo</a>.
+<pre>
+<code class="bash"># Git code
+$ git clone https://github.com/MinnPost/election-night-api.git &amp;&amp; cd election-night-api
 
-    <h2>Move to ScraperWiki</h2>
+# Instal dependencies
+$ pip install -r requirements.txt
+</code></pre>
 
-    <p>When election night is over and demand is lessened results are no longer being
-    updated frequently, it is easy to move the API off of your server and on to
-    ScraperWiki, which has a <a href="https://wordpress.scraperwiki.com/solutions/data-journalism/">free tier for journalists.</a></p>
+      <h2>Write a scraper</h2>
+
+      <p>Election Night API contains a basic template for scraping election night results
+      files, but because each state and election is pretty different, custom scripts
+      for parsing the results files must be written. You'll need to be able to write
+      some basic Python to build a scraper for your state. For more details, see <a href="https://github.com/MinnPost/election-night-api#adding-or-managing-a-state">managing scrapers section</a>
+      and the <a href="https://github.com/MinnPost/election-night-api/blob/master/states/example/example.py">example code</a>.</p>
+
+<pre>
+<code class="bash"># Start with the example
+$ cp -r states/example states/xx
+</code></pre>
+</code></pre>
+
+      <h2>Collect data</h2>
+
+      <p>Run the scraper tool to save the data locally to the SQLite database. Some <a href="https://github.com/MinnPost/election-night-api#the-scraper-tool">more details</a> are available on the README.</p>
+
+<pre>
+<code class="bash"># Get some help
+$ bin/ena -h
+
+# Get results for VA for the most recent election
+$ bin/ena VA results
+</code></pre>
+
+      <h2>The API</h2>
+
+      <p>The API allows for arbitrary SQL selects of the data and returns JSON. Some <a href="https://github.com/MinnPost/election-night-api#the-api">more details</a> are available on the README.</p>
+
+<pre>
+<code class="bash"># Get all the contests
+$ curl http://example-api.com/?q=SELECT%20*%20contests
+</code></pre>
+
+<pre>
+<code class="bash">[
+  {
+    "precincts_reporting": 4106,
+    "updated": 1415989261,
+    "county_id": "",
+    "title": "Attorney General",
+    "district_code": "",
+    "total_precincts": 4106,
+    "seats": 1,
+    "primary": 0,
+    "precinct_id": "",
+    "office_id": "0335",
+    "state": "mn",
+    "election": "20141104",
+    "office_name": "Attorney General",
+    "percent_reporting": 1,
+    "scope": "state",
+    "id": "id-MN----0335",
+    "total_votes": 1928980
+  },
+  ...
+]
+</code></pre>
+
+      <h3>Local, testing API</h3>
+
+      <p>You can run a local API for testing, but definitely don't use this for production. Some <a href="https://github.com/MinnPost/election-night-api#local-api">more details</a> are available on the README.</p>
+
+<pre>
+<code class="bash"># Run the basic API. It will be available at: http://localhost:5000/?q=
+$ python tests/local_api.py
+</code></pre>
+
+      <h3>Election Night API</h3>
+
+      <p>The API is intended to be deployed on a resourceful server, such as an Ubuntu server on EC2, on election night, to be able to handle high demand for the results. <a href="https://github.com/MinnPost/election-night-api#election-night-deploy">Detailed instructions</a> can be found in the README.</p>
+
+<pre>
+<code class="bash"># 1. Install code
+# 2. Install Dumptruck
+# 3. Install and confgiure FCGIWrap
+# 4. Install and confgiure nginx
+# 5. Schedule data collection (scraper)
+</code></pre>
+
+      <h3>Off-season API</h3>
+
+      <p>When election night is over, demand is lessened, and results are no longer being updated frequently, it is easy to move the API off of your server and on to ScraperWiki, which has a <a href="https://wordpress.scraperwiki.com/solutions/data-journalism/">free tier for journalists</a> and free tier for everyone.  See the <a href="https://github.com/MinnPost/election-night-api#scraperwiki-deploy">full instructions</a> on the README.</p>
+
+
+      <div class="footnote">
+        <p>A project of <a href="http://minnpost.com" target="_blank">MinnPost</a> with support by <a href="http://opennews.org/">OpenNews</a>.</p>
+      </div>
+
+
+      <script src="demo/bower_components/underscore/underscore.js"></script>
+      <script src="demo/bower_components/ractive/ractive.min.js"></script>
+      <script src="demo/bower_components/highlightjs/highlight.pack.js"></script>
+      <script src="demo/demo.js"></script>
+
+    </div>
   </div>
 </div>
