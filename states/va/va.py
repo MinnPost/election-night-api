@@ -55,20 +55,20 @@ class Scraper(object):
 
             #test if precinct ID is already in list of precincts
             if 'all_precincts' in contests[contest_id]:
-                if precinct_id not in contests[contest_id]['all_precincts'] and '##' not in precinct_id:
+                if precinct_id not in contests[contest_id]['all_precincts'] and '###' not in precinct_id:
                     contests[contest_id]['all_precincts'].append(precinct_id)
             else:
-                if '##' not in precinct_id:
+                if '###' not in precinct_id:
                     contests[contest_id]['all_precincts'] = [precinct_id]
 
             #make separate list of precincts that actually have non-blank vote
             #totals (i.e. the precinct has reported) Precincts with ## are not
             #counted toward the total
             if 'counted_precincts' in contests[contest_id]:
-                if precinct_id not in contests[contest_id]['counted_precincts'] and row[20] != '' and '##' not in precinct_id:
+                if precinct_id not in contests[contest_id]['counted_precincts'] and row[20] != '' and '###' not in precinct_id:
                     contests[contest_id]['counted_precincts'].append(precinct_id)
             else:
-                if row[20] != '' and '##' not in precinct_id:
+                if row[20] != '' and '###' not in precinct_id:
                     contests[contest_id]['counted_precincts'] = [precinct_id]
 
             #contest title
@@ -163,6 +163,7 @@ class Scraper(object):
                 percent = 0.0
 
             #figure out if we have a winner
+            winner = False
             contest_id = results[choice_id]['contest_id']
             if contests[contest_id]['counted_precincts'] == contests[contest_id]['all_precincts']:
                 this_votes = results[choice_id]['votes']
