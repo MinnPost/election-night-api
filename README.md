@@ -222,4 +222,5 @@ For non-election time, it makes sense to save resources and use the ScraperWiki 
 
 1. Make sure you have an account on ScraperWiki
 1. Create new, or use the existing, scraper for the election results.
-1. Run ...
+1. SSH into the Code in your Browser tool
+1. git clone https://github.com/MinnPost/election-night-api.git
