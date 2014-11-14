@@ -42,7 +42,7 @@ You may have the following already installed.
 1. (optional) Use [virtualenv](http://virtualenv.readthedocs.org/en/latest/) and [virtualenvwrapper](http://virtualenvwrapper.readthedocs.org/en/latest/install.html)
     1. `pip install virtualenv virtualenvwrapper`
         * This may need to be run with `sudo`; you should be able to tell if you get a permission error.
-        * To get virtualenvwrapper to load on startup, do the following, though if you have a more non-standard Python install or are not on a bash system, see full instructions.  'echo "export WORKON_HOME=$HOME/.virtualenvs" >> ~/.bash_profile && echo "export PROJECT_HOME=$HOME/Devel" >> ~/.bash_profile && echo "source /usr/local/bin/virtualenvwrapper.sh" >> ~/.bash_profile && source ~/.bash_profile`
+        * To get virtualenvwrapper to load on startup, do the following, though if you have a more non-standard Python install or are not on a bash system, see full instructions. `echo "export WORKON_HOME=$HOME/.virtualenvs" >> ~/.bash_profile && echo "export PROJECT_HOME=$HOME/Devel" >> ~/.bash_profile && echo "source /usr/local/bin/virtualenvwrapper.sh" >> ~/.bash_profile && source ~/.bash_profile`
 
 ### Get code and install dependencies
 
