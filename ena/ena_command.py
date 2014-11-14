@@ -84,32 +84,41 @@ examples:
         if self.args.debug:
             logging.basicConfig(level = logging.DEBUG)
 
-        # Load up utility
-        util = ENAUtils(self.args.state, self.args.election, self.args.debug)
-
         # Remove database
         if self.args.remove_db and os.path.exists(util.db_file):
             self.out('Removing DB. \n')
             os.remove(util.db_file)
 
+        # Run
+        self.run(self.args.state, self.args.election, self.args.function, self.args.args, self.args.debug)
+
+
+    def run(self, state, election, function, arguments = [], debug = False):
+        """
+        Run the method for a given state.  Abstracted so that this
+        can be run via Python directly.
+        """
+        # Load up utility
+        util = ENAUtils(state, election, debug)
+
         # Create scraper instance
         scraper = util.Scraper(util)
 
         # Call method
-        method = getattr(scraper, self.args.function, None)
+        method = getattr(scraper, function, None)
         if method and callable(method):
             # Time it
             start = datetime.now()
-            self.out('Running %s scraper for %s ... ' % (self.args.function, self.args.state))
+            self.out('Running %s scraper for %s ... ' % (function, state))
 
             # Run
-            method(*self.args.args if self.args.args is not None else [])
+            method(*arguments if arguments is not None else [])
 
             # How much time passed
             end = datetime.now() - start
             self.out('Done (in %.2f min). \n' % (round(float(end.seconds) / 60, 2)))
         else:
-            raise Exception('Method %s not found in %s scraper.' % (self.args.function, self.args.state))
+            raise Exception('Method %s not found in %s scraper.' % (function, state))
 
 
     def out(self, message):

@@ -106,27 +106,29 @@ class ENAUtils(object):
         if db_file not in ['', None, False]:
             self.db_file = db_file
 
+        # Attach scraperwiki stuff
+        # https://github.com/scraperwiki/scraperwiki-python
+        self.sql = scraperwiki.sql
+        self.scrape = scraperwiki.scrape
+
 
     def setup(self):
         """
-        Setup to run when initializing.  This should be run in your contructor.
+        Setup to run when initializing.  This should be run in your contructor
+        and not needed on the ScraperWiki platform.
         """
         # Scraperwiki's default db is relative to where the script
         # is running but be default the db is created at scraperwiki.sqlite
         # where you are, but this should be empty since we don't use it
-        scraperwiki.sql._State.db_path = 'sqlite:///%s' % self.db_file
-        scraperwiki.sql._State.connection()
+        if 'SCRAPERWIKI_PLATFORM' in globals() and not SCRAPERWIKI_PLATFORM:
+            scraperwiki.sql._State.db_path = 'sqlite:///%s' % self.db_file
+            scraperwiki.sql._State.connection()
 
         # Make sure the DB is efficient.  Synchronous off means that power outage
         # or possible interruption can corrupt database
         if self.db_synchronous == False:
             scraperwiki.sql.execute('PRAGMA SYNCHRONOUS = OFF')
         scraperwiki.sql.execute('VACUUM')
-
-        # Attach scraperwiki stuff
-        # https://github.com/scraperwiki/scraperwiki-python
-        self.sql = scraperwiki.sql
-        self.scrape = scraperwiki.scrape
 
 
     def default_logger(self, message):
