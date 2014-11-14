@@ -84,7 +84,7 @@ class ENAUtils(object):
                 globals(), locals(), ['meta'], -1).meta
 
         # Get scraper class
-        self.meta_file = os.path.join(self.scraper_dir, state, '%s.py' % self.state)
+        self.meta_file = os.path.join(self.scraper_dir, self.state, '%s.py' % self.state)
         if os.path.exists(self.meta_file) and os.path.isfile(self.meta_file):
             self.Scraper = __import__('%s.%s' % (self.state, self.state),
                 globals(), locals(), ['Scraper'], -1).Scraper
