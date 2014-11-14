@@ -2,7 +2,7 @@
 
 A set of scrapers to create an API for election night applications.  This is aimed at small to medium orgs that cannot afford services like AP or Reuters elections, or orgs that need more local results.  This works best with states that have an election night feed.
 
-The architecture of this application is based from [ScraperWiki](https://scraperwiki.com) a platform for scraping and serving data.  The main reason for this decision is so that on or around election night, an organization can run its own server with high resources, while using the [free](https://scraperwiki.com/pricing) (for [journalists](https://wordpress.scraperwiki.com/solutions/data-journalism/)) infrastructure of ScraperWiki the rest of the year.
+The architecture of this application is based from [ScraperWiki](https://scraperwiki.com), a platform for scraping and serving data.  The main reason for this decision is so that on or around election night, an organization can run its own server with high resources, while using the [free](https://scraperwiki.com/pricing) (for [journalists](https://wordpress.scraperwiki.com/solutions/data-journalism/)) infrastructure of ScraperWiki the rest of the year.
 
 There are two parts to the API.
 
@@ -42,6 +42,7 @@ You may have the following already installed.
 1. (optional) Use [virtualenv](http://virtualenv.readthedocs.org/en/latest/) and [virtualenvwrapper](http://virtualenvwrapper.readthedocs.org/en/latest/install.html)
     1. `pip install virtualenv virtualenvwrapper`
         * This may need to be run with `sudo`; you should be able to tell if you get a permission error.
+        * To get virtualenvwrapper to load on startup, do the following, though if you have a more non-standard Python install or are not on a bash system, see full instructions.  'echo "export WORKON_HOME=$HOME/.virtualenvs" >> ~/.bash_profile && echo "export PROJECT_HOME=$HOME/Devel" >> ~/.bash_profile && echo "source /usr/local/bin/virtualenvwrapper.sh" >> ~/.bash_profile && source ~/.bash_profile`
 
 ### Get code and install dependencies
 
