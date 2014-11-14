@@ -7,14 +7,8 @@ import sys
 import os
 import re
 import unicodecsv
-import datetime
-import calendar
-import json
-import requests
-import lxml.html
 
-
-class Scraper:
+class Scraper(object):
     """
     Class for Scraper.  This will be instantiated with the command line
     utility and will be passed the ENA utility object.
@@ -34,17 +28,17 @@ class Scraper:
         """
         Scrape results
 
-        Called with command like like:
-        ena VA results
+        This was developed for the VA results file from the November 4, 2014
+        general election. Some updating may be necessary if file layout changes.
         """
 
-        # Scrape
+        # Load and scrape the results file
         scraped = self.util.scrape(self.util.election['url'])
 
         rows = unicodecsv.reader(scraped.splitlines(), delimiter=',', quotechar='"', encoding='latin-1')
 
+        #skip header row
         rows.next()
-
 
         contests = {}
         results = {}
@@ -56,7 +50,7 @@ class Scraper:
             if contest_id not in contests:
                 contests[contest_id] = {}
 
-            #count precincts
+            #create unique id for precincts, to see which have already been counted
             precinct_id = row[4] + "-" + row[8]
 
             #test if precinct ID is already in list of precincts
@@ -69,7 +63,7 @@ class Scraper:
 
             #make separate list of precincts that actually have non-blank vote
             #totals (i.e. the precinct has reported) Precincts with ## are not
-            #counted towar the total
+            #counted toward the total
             if 'counted_precincts' in contests[contest_id]:
                 if precinct_id not in contests[contest_id]['counted_precincts'] and row[20] != '' and '##' not in precinct_id:
                     contests[contest_id]['counted_precincts'].append(precinct_id)
