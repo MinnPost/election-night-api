@@ -28,11 +28,12 @@
   function getContest(field, search) {
     var contest_fields = ['id', 'state', 'election', 'title', 'precincts_reporting', 'total_precincts', 'percent_reporting', 'total_votes', 'seats']
     var api = 'https://premium.scraperwiki.com/xcjnkr8/irxxyd91ypv1d5c/sql/?q=[[[QUERY]]]';
-    var query = "SELECT * FROM contests AS c JOIN results AS r ON c.id = r.contest_id AND c.state = r.state AND c.election = r.election WHERE [[[FIELD]]] LIKE '%[[[SEARCH]]]%' LIMIT 20";
+    var query = "SELECT * FROM contests AS c JOIN results AS r ON c.id = r.contest_id AND c.state = r.state AND c.election = r.election WHERE [[[FIELD]]] LIKE '%[[[SEARCH]]]%' ORDER BY c.title, r.percentage LIMIT 50";
     query = query.replace('[[[FIELD]]]', field).replace('[[[SEARCH]]]', search);
 
     r.set('message', '');
     r.set('isLoading', true);
+    r.set('moreThanLimit', false);
 
     $.getJSON(api.replace('[[[QUERY]]]', encodeURIComponent(query)))
       .done(function(data) {
@@ -60,6 +61,12 @@
 
           contests[di].results = _.sortBy(contests[di].results, 'percentage').reverse();
         });
+
+        // Trim to first 3
+        if (_.size(contests) > 3) {
+          r.set('moreThanLimit', true);
+        }
+        contests = _.first(_.toArray(contests), 3);
 
         r.set('contests', contests);
       })

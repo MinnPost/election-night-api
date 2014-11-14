@@ -197,7 +197,12 @@ $ python tests/local_api.py
                     </tbody>
                   </table>
                 </div>
+              </div>
             {{/contests}}
+
+            {{#moreThanLimit}}
+              <p class="small text-center">Only showing first 3 results</p>
+            {{/moreThanLimit}}
           </div>
         </div>
 
