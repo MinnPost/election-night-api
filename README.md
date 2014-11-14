@@ -67,6 +67,8 @@ The data you need to scrape will vary from state to state, though there are some
 1. `cp states/example states/xx`
 1. The `xx_meta.py` file manages each information and configuration about each election in the state.  Create the configuration as is needed for your state; there are only a couple required field.
     1. Rename `example_meta.py` to `xx_meta.py`
+    1. Change the Election ID. Suggested format is date of the election in the form YYYYMMDD
+    1. (optional) The URL to the election results file can go in here.
 1. The `xx.py` holds the `Scraper` class which has the methods that are run through the command line tool.  Most of this will be specific to your state and source.
     1. Rename `example.py` to `xx.py`
     1. Make sure to call `utility.setup()` in the constructor.
@@ -100,6 +102,12 @@ The minimum required results fields are `id, state, election, updated, contest_i
 In both cases, additional fields can be added to the tables as needed for your specific elections. The `id` in the contests table should match the `contest_id` in the results table and is used to link candidates/options to their overall races. For more information on required fields, see *Data modeling* below.
 
 Some of these data fields may be accessible directly from the results file, but others will require calculation or other manipulation inside the scraper script. Look at existing state scrapers for some examples of this data processing.
+
+#### Manual data
+
+In some cases, you may want to add in additional election data not available in the election results file. An easy way to do this is to create a Google Spreadsheet with the additional data. The `utility.google_spreadsheet(spreadsheet_id, worksheet_id, gs_types_dict)` method gives you all the rows in a specific Google Spreadsheet which you can iterate over to read additional data for writing to the `results` or `contests` tables. You probably want to match the unique IDs for either results or contests in this spreadsheet.
+
+For more information, see **Utility library** below.
 
 ### Utility library
 
