@@ -18,7 +18,7 @@ meta = {
         'date': date(2014, 11, 04),
         # Whether primary
         'primary': False,
-        'url': 'https://voterinfo.sbe.virginia.gov/PublicSite/Public/results/Nov2014General.txt'
+        'url': 'https://voterinfo.sbe.virginia.gov/SBE_CSV/ELECTIONS/ELECTIONRESULTS/2014/2014%20November%20General.csv'
 
         #...
 
